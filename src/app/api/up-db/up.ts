@@ -51,8 +51,13 @@ async function up(db: D1Database) {
     upSQLStatements.forEach(async (sql) => {
         try {
             await db.prepare(sql).run()
-        } catch (e: any) {
-            console.error(e.cause?.message, e.message)
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                const causeMessage = e.cause instanceof Error ? e.cause.message : String(e.cause);
+                console.log(causeMessage, e.message)
+            } else {
+                console.log('Unknown error occurred:', e);
+            }
         }
     })
 }
